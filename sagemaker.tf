@@ -19,10 +19,20 @@ resource "aws_sagemaker_space" "space" {
   space_name = "${local.prefix}-learning"
 
   space_sharing_settings {
-    sharing_type = "Shared"
+    sharing_type = "Private"
   }
   ownership_settings {
     owner_user_profile_name = aws_sagemaker_user_profile.default.user_profile_name
+  }
+
+  space_settings {
+    app_type = "JupyterLab"
+
+    space_storage_settings {
+      ebs_storage_settings {
+        ebs_volume_size_in_gb = 50
+      }
+    }
   }
 }
 
