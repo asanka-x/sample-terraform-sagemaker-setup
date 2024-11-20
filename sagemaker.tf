@@ -11,6 +11,7 @@ resource "aws_sagemaker_domain" "domain" {
 
   default_space_settings {
     execution_role = aws_iam_role.role.arn
+    security_groups = [module.vpc.default_security_group_id]
   }
 }
 
@@ -28,11 +29,55 @@ resource "aws_sagemaker_space" "space" {
   space_settings {
     app_type = "JupyterLab"
 
+    jupyter_lab_app_settings {
+      default_resource_spec {
+        instance_type                 = "ml.t3.medium"
+        sagemaker_image_version_alias = "1.10.0"
+      }
+    }
+
     space_storage_settings {
       ebs_storage_settings {
         ebs_volume_size_in_gb = 50
       }
     }
+  }
+
+  lifecycle {
+    ignore_changes = [space_settings]
+  }
+}
+
+resource "aws_sagemaker_space" "space_jarib" {
+  domain_id  = aws_sagemaker_domain.domain.id
+  space_name = "${local.prefix}-jarib"
+
+  space_sharing_settings {
+    sharing_type = "Private"
+  }
+  ownership_settings {
+    owner_user_profile_name = aws_sagemaker_user_profile.default.user_profile_name
+  }
+
+  space_settings {
+    app_type = "JupyterLab"
+
+    jupyter_lab_app_settings {
+      default_resource_spec {
+        instance_type                 = "ml.t3.medium"
+        sagemaker_image_version_alias = "1.10.0"
+      }
+    }
+
+    space_storage_settings {
+      ebs_storage_settings {
+        ebs_volume_size_in_gb = 50
+      }
+    }
+  }
+
+  lifecycle {
+    ignore_changes = [space_settings]
   }
 }
 
