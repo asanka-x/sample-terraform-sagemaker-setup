@@ -12,6 +12,18 @@ resource "aws_sagemaker_domain" "domain" {
       direct_deploy_settings {
         status = "ENABLED"
       }
+      kendra_settings {
+        status = "DISABLED"
+      }
+      model_register_settings {
+        status = "ENABLED"
+      }
+      time_series_forecasting_settings {
+        status = "DISABLED"
+      }
+      workspace_settings {
+        s3_artifact_path = "s3://sagemaker-${data.aws_region.current.name}-${data.aws_caller_identity.current.account_id}"
+      }
     }
   }
 
